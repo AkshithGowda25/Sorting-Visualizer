@@ -10,12 +10,12 @@ A clean, responsive, and interactive sorting algorithm visualizer built with sem
 
 ## 🔗 Live Demo & Screenshot
 
-- **Live Demo:** [https://your-username.github.io/sorting-visualizer/](https://your-username.github.io/sorting-visualizer/) *(Replace with your GitHub Pages URL)*
+- **Live Demo:** https://akshithgowda25.github.io/Sorting-Visualizer/
 
 ### Screenshot
 
-<!-- Replace with an actual screenshot or GIF demo of AlgoPulse in action -->
-![AlgoPulse Sorting Visualizer Screenshot](https://via.placeholder.com/1200x675/0a0e17/38bdf8?text=AlgoPulse+Sorting+Algorithm+Visualizer)
+<img width="1397" height="897" alt="image" src="https://github.com/user-attachments/assets/d7d75e18-3912-4edb-8ebb-022c879e8d45" />
+
 
 ---
 
