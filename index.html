@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlgoPulse | Sorting Algorithm Visualizer</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-icon" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <h1 class="app-title">AlgoPulse</h1>
+          <p class="app-tagline">Interactive Sorting Algorithm Visualizer</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-accent">Vanilla JS</span>
+        <span class="badge badge-outline">Zero Dependencies</span>
+      </div>
+    </header>
+
+    <!-- Controls Bar -->
+    <section class="controls-panel" aria-label="Visualizer Controls">
+      <div class="control-group">
+        <label for="algo-select" class="control-label">Algorithm</label>
+        <div class="select-wrapper">
+          <select id="algo-select" class="custom-select" aria-label="Select sorting algorithm">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+            <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="slider-header">
+          <label for="size-slider" class="control-label">Array Size</label>
+          <span id="size-value" class="slider-badge">40</span>
+        </div>
+        <input 
+          type="range" 
+          id="size-slider" 
+          class="custom-slider" 
+          min="10" 
+          max="100" 
+          value="40" 
+          step="1"
+          aria-label="Adjust array size from 10 to 100"
+        >
+      </div>
+
+      <div class="control-group">
+        <div class="slider-header">
+          <label for="speed-slider" class="control-label">Speed</label>
+          <span id="speed-value" class="slider-badge">Fast</span>
+        </div>
+        <input 
+          type="range" 
+          id="speed-slider" 
+          class="custom-slider" 
+          min="1" 
+          max="100" 
+          value="65" 
+          step="1"
+          aria-label="Adjust sorting animation speed"
+        >
+      </div>
+
+      <div class="control-actions">
+        <button 
+          id="generate-btn" 
+          class="btn btn-secondary" 
+          aria-label="Generate new random array"
+          title="Generate new random array"
+        >
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span>New Array</span>
+        </button>
+
+        <button 
+          id="sort-btn" 
+          class="btn btn-primary" 
+          aria-label="Start sorting visualization"
+          title="Start sorting visualization"
+        >
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <span>Sort</span>
+        </button>
+
+        <button 
+          id="stop-btn" 
+          class="btn btn-danger" 
+          aria-label="Stop sorting visualization" 
+          title="Stop sorting visualization"
+          disabled
+        >
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="5" y="5" width="14" height="14" rx="2"/>
+          </svg>
+          <span>Stop</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Workspace (Visualizer + Info Panel) -->
+    <main class="workspace-grid">
+      <!-- Left Column: Visualizer Arena -->
+      <section class="visualizer-card" aria-label="Sorting Visualization Canvas">
+        <!-- Live Counters & Status Bar -->
+        <div class="metrics-bar">
+          <div class="metric-item">
+            <span class="metric-label">Status</span>
+            <span id="status-pill" class="status-pill status-ready">
+              <span class="status-dot"></span>
+              <span id="status-text">Ready</span>
+            </span>
+          </div>
+
+          <div class="metric-item">
+            <span class="metric-label">Comparisons</span>
+            <span id="comparisons-count" class="metric-value" aria-live="polite">0</span>
+          </div>
+
+          <div class="metric-item">
+            <span class="metric-label">Swaps / Writes</span>
+            <span id="swaps-count" class="metric-value" aria-live="polite">0</span>
+          </div>
+
+          <div class="metric-item hide-on-mobile">
+            <span class="metric-label">Array Size</span>
+            <span id="metric-size" class="metric-value">40</span>
+          </div>
+        </div>
+
+        <!-- Vertical Bars Canvas -->
+        <div class="bars-wrapper">
+          <div 
+            id="bars-container" 
+            class="bars-container" 
+            role="region" 
+            aria-label="Array bars representing integer values"
+          >
+            <!-- Generated bars injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Color Legend -->
+        <div class="legend-bar" aria-label="Color Legend">
+          <div class="legend-item">
+            <span class="legend-swatch swatch-default"></span>
+            <span class="legend-text">Default</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch swatch-compare"></span>
+            <span class="legend-text">Comparing</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch swatch-swap"></span>
+            <span class="legend-text">Swapping / Writing</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch swatch-sorted"></span>
+            <span class="legend-text">Sorted</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Algorithm Complexity & Information Panel -->
+      <aside class="info-card" aria-label="Algorithm Information and Complexity">
+        <div class="info-header">
+          <div>
+            <span class="sub-heading">Selected Algorithm</span>
+            <h2 id="algo-title" class="algo-title">Bubble Sort</h2>
+          </div>
+          <span id="algo-stability" class="badge badge-accent">Stable</span>
+        </div>
+
+        <p id="algo-description" class="algo-description">
+          Compares adjacent elements and swaps them if they are in the wrong order. With each pass, the largest unsorted element bubbles up to its final position at the end of the array.
+        </p>
+
+        <div class="complexity-section">
+          <h3 class="complexity-heading">Time Complexity</h3>
+          <div class="complexity-grid">
+            <div class="complexity-box">
+              <span class="complexity-label">Best Case</span>
+              <span id="time-best" class="complexity-value font-mono">O(n)</span>
+              <span class="complexity-note">Already sorted</span>
+            </div>
+            <div class="complexity-box">
+              <span class="complexity-label">Average Case</span>
+              <span id="time-avg" class="complexity-value font-mono">O(n²)</span>
+              <span class="complexity-note">Random order</span>
+            </div>
+            <div class="complexity-box">
+              <span class="complexity-label">Worst Case</span>
+              <span id="time-worst" class="complexity-value font-mono">O(n²)</span>
+              <span class="complexity-note">Reverse sorted</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="complexity-section">
+          <h3 class="complexity-heading">Space Complexity</h3>
+          <div class="complexity-box single-box">
+            <div class="space-box-content">
+              <div>
+                <span class="complexity-label">Auxiliary Space</span>
+                <span id="space-complexity" class="complexity-value font-mono">O(1)</span>
+              </div>
+              <span id="space-note" class="complexity-note">In-place sorting algorithm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tips-box">
+          <div class="tip-icon">💡</div>
+          <p class="tip-text">
+            <strong>Pro Tip:</strong> Adjust the speed slider to slow down and observe step-by-step element comparisons, or speed it up for large arrays.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Built with semantic HTML5, modern CSS3 &amp; vanilla JavaScript &bull; Ready for GitHub Pages</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
